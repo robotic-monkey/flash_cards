@@ -8,6 +8,7 @@ import CardDealer from './CardDealer';
 import Options from './Options';
 import TTS from './TTS';
 import SelectionModal from './SelectionModal'
+import RadicalModal from './RadicalModal'
 
 
   const StyledRow = styled(Row)`
@@ -36,7 +37,7 @@ export const AppTable = () => {
     <StyledAppHolder>
       <Container fluid>
         <StyledRow>
-          <StyledCol>1 of 3</StyledCol>
+          <StyledCol><RadicalModal /></StyledCol>
           <StyledHero xs={8}>{<CardDealer />}</StyledHero>
           <StyledCol>3 of 3</StyledCol>
         </StyledRow>

@@ -3,7 +3,7 @@ import {FlashCardContext} from '../contexts/FlashCardContext';
 import Accordion from 'react-bootstrap/Accordion';
 import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button'
-import Form from 'react-bootstrap/Form'
+
 import styled from 'styled-components';
 import Timer from './Timer';
 const StyledDiv = styled.div `
@@ -130,7 +130,7 @@ export const Options = () => {
                 <span>Sound on:{'  '}
                   <input
                     type="checkbox"
-                    defaultChecked={context.viewSideA.back}
+                    defaultChecked={context.sound.on}
                     onChange={() => {
                     context.setSound();
                   }}/></span>

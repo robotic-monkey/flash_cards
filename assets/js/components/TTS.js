@@ -8,18 +8,13 @@ export const TTS = () => {
   const speech = new Speech();
   const context = useContext(FlashCardContext);
   
-
- 
-
   const initSound = () => {
-
     if(context.sound.on == true){
-
       speech.init({
         'volume': 1,
         'lang': 'ja-JP',
         'rate': 1,
-        'pitch': 1.4,
+        'pitch': 1,
         'voice': 'Microsoft Haruka Desktop - Japanese',
         'splitSentences': false,
         'listeners': {
@@ -40,8 +35,6 @@ export const TTS = () => {
           "ad !";
 
     }
-
-    
 
   const speak = () => {
     speech.speak({
@@ -67,9 +60,7 @@ export const TTS = () => {
       console.error("An error occurred :", e);
     });
   }
-
   }
-
   useEffect(() => {
     initSound()
   }, [context.currentIndex.index]); 
@@ -81,7 +72,6 @@ export const TTS = () => {
       }}>treats</Button>
     </div>
   );
-
 }
 
 export default TTS;

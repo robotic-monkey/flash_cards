@@ -3,30 +3,32 @@ import axios from 'axios';
 
 export const FlashCardContext = createContext();
 
+
 class FlashCardProvider extends Component {
+
   constructor(props) {
     super(props);
     this.state = {
       flashCards: [{side_a: "", side_b: "", side_c: "", side_d: "", category: "", section: "", primitives: {"radicals": {}} }],
       preselectedCards: [{side_a: "", side_b: "", side_c: "", side_d: "", category: "", section: "", primitives: {"radicals": {}} }],
       selectedCards: [{side_a: "", side_b: "", side_c: "", side_d: "", category: "", section: "", primitives: {"radicals": {}} }],
+      radicals:[{kanji_rad: "", meaning: ""}],
       currentIndex: {index: 0},
       currentSide: {side: 'front'},
       viewSideA: {front:true, back: true},
       viewSideB: {front:false, back: true},
       viewSideC: {front:false, back: true},
       viewSideD: {front:true, back: true},
-      sound: {on: true},
+      sound: {on: false},
       filters: {category: ['N5','N4']},
       sliderValue: [10,20],
-      timerState: {on: false, length: 5}
     };
     this.readFlashCard()
+    this.readRadicals()
   }
 
   setView(view, side, onoroff){
-   
-    //console.log("currentside: " + this.state.currentSide.side + ", view: " + view + ', side: ' + side + ', onoroff: ' + onoroff)
+
     if(side == 'front') {
       switch (view) {
         case "A":
@@ -72,10 +74,6 @@ class FlashCardProvider extends Component {
     this.setState({currentSide: {side:side}});
   }
 
-  flipCards(){
-    this.setSide("back");
-  }
-
   readFlashCard(){
     axios.get('/api/flashcard/read')
     .then(response => {
@@ -83,6 +81,18 @@ class FlashCardProvider extends Component {
             flashCards: response.data,
         });
         this.filterCards()
+    }).catch(error => {
+    console.error(error);
+});
+  }
+
+  readRadicals(){
+    axios.get('/api/radicals/read')
+    .then(response => {
+        this.setState({
+            radicals: response.data,
+        });
+        console.log(this.state.radicals)
     }).catch(error => {
     console.error(error);
 });
@@ -122,9 +132,6 @@ class FlashCardProvider extends Component {
 
   resetCardOrder(){
     this.filterCards()
-    //this.setState({
-    //  selectedCards: this.state.preselectedCards
-   // })
   }
 
   setCardRange(start, end){
@@ -151,21 +158,33 @@ class FlashCardProvider extends Component {
     })
   }
 
+  nextCard(){
+    if(this.state.currentSide.side == 'front'){
+      this.setState({currentSide: {side:"back"}});
+    }else{
+      if (this.state.selectedCards.length - 1 > (this.state.currentIndex.index)) {
+         this.setState({currentIndex: {index: this.state.currentIndex.index+1}})
+       } else {
+         this.setState({currentIndex: {index:0}})
+       }
+       this.setSide("front");
+    }
+  }
+
   render() {
     return (
       <FlashCardContext.Provider value={{
           ...this.state,
           setIndex: (index) => this.setState({currentIndex: {index: index}}),
           readFlashCard: this.readFlashCard.bind(this),
-          flipCards: this.flipCards.bind(this),
           randomizeCards: this.randomizeCards.bind(this),
           resetCardOrder: this.resetCardOrder.bind(this),
-          setSide: this.setSide.bind(this),
-          setView: this.setView.bind(this),
           setFilter: this.setFilter.bind(this),
           setCardRange: this.setCardRange.bind(this),
           setSliderValue: this.setSliderValue.bind(this),
-          setSound: () => this.setState({sound: {on: !this.state.sound.on}})
+          setView: this.setView.bind(this),
+          setSound: () => this.setState({sound: {on: !this.state.sound.on}}),
+          nextCard: this.nextCard.bind(this),
       }}>
         {this.props.children}
       </FlashCardContext.Provider>
